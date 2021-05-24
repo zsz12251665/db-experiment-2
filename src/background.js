@@ -1,8 +1,10 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
-import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+// import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import util from 'util'
+import sqlite3 from 'sqlite3'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -79,3 +81,15 @@ if (isDevelopment) {
     })
   }
 }
+
+const db = new (sqlite3.verbose().Database)('sqlite3.db');
+const sqlite = {
+  set: util.promisify(db.run).bind(db),
+  one: util.promisify(db.get).bind(db),
+  get: util.promisify(db.all).bind(db)
+}
+
+ipcMain.on('db-query', async (event, mode, ...args) => {
+  const res = await sqlite[mode](...args);
+  event.sender.send('db-reply', res);
+});
