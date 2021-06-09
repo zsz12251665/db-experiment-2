@@ -2,6 +2,8 @@
   "name": "db-experiment-2-vue",
   "version": "0.1.0",
   "private": true,
+  "author": "zsz12251665",
+  "description": "Database Experiment 2",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -15,6 +17,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "element-plus": "^1.0.2-beta.44",
+    "mysql": "^2.18.1",
     "sqlite3": "^5.0.2",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0"

@@ -1,9 +1,9 @@
 INSERT INTO `Administrator` VALUES ('root', '123456');
 
-INSERT INTO `Student` VALUES ('1561401613', 'Mao Ting', TRUE, 18, 2015, 'Selected Class', '333333');
-INSERT INTO `Student` VALUES ('1530561331', 'Tan Li', TRUE, 18, 2015, 'Selected Class', '111111');
-INSERT INTO `Student` VALUES ('1530501085', 'Chao Yang', TRUE, 19, 2015, 'Selected Class', '555555');
-INSERT INTO `Student` VALUES ('1530591376', 'Han Meimei', FALSE, 17, 2015, 'Elite Class', '666666');
+INSERT INTO `Student` VALUES ('1561401613', 'Mao Ting', True, 18, 2015, 'Selected Class', '333333');
+INSERT INTO `Student` VALUES ('1530561331', 'Tan Li', True, 18, 2015, 'Selected Class', '111111');
+INSERT INTO `Student` VALUES ('1530501085', 'Chao Yang', True, 19, 2015, 'Selected Class', '555555');
+INSERT INTO `Student` VALUES ('1530591376', 'Han Meimei', False, 17, 2015, 'Elite Class', '666666');
 
 INSERT INTO `Teacher` VALUES ('10001', 'Yan', 'YYYYYY');
 INSERT INTO `Teacher` VALUES ('10003', 'Mao', 'MMMMMM');
@@ -14,17 +14,9 @@ INSERT INTO `Teacher` VALUES ('35790', 'Tian', 'TTTTTT');
 INSERT INTO `Course` VALUES ('1008060', 'Algorithm', '10001', 2, 2, 2019);
 INSERT INTO `Course` VALUES ('1203006', 'COA', '10003', 1, 2, 2018);
 INSERT INTO `Course` VALUES ('2009400', 'C++', '20009', 2, 1, 2020);
-INSERT INTO `Course` VALUES ('2009401', 'C++', '20010', 2, 1, 2020);
+INSERT INTO `Course` VALUES ('2009401', 'C++', '20010', 2, 1, NULL);
 INSERT INTO `Course` VALUES ('3009405', 'Java', '20010', 2, 1, 2020);
 INSERT INTO `Course` VALUES ('7787564', 'Economics', '35790', 1, 1, 2020);
-
-INSERT INTO `Teach` VALUES ('10001', 'Algorithm');
-INSERT INTO `Teach` VALUES ('10003', 'COA');
-INSERT INTO `Teach` VALUES ('20009', 'C++');
-INSERT INTO `Teach` VALUES ('20010', 'C++');
-INSERT INTO `Teach` VALUES ('20010', 'Java');
-INSERT INTO `Teach` VALUES ('20010', 'Compiler');
-INSERT INTO `Teach` VALUES ('35790', 'Economics');
 
 INSERT INTO `Choose` VALUES ('1561401613', '1008060', 2016, 95);
 INSERT INTO `Choose` VALUES ('1561401613', '1203006', 2017, 92);

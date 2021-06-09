@@ -86,7 +86,8 @@ if (isDevelopment) {
 const db = new (sqlite3.verbose().Database)(path.resolve(__dirname, 'sqlite3.db'));
 const query = util.promisify(db.all).bind(db);
 
-ipcMain.on('sql-query', async (event, ...args) => {
-  const res = await query(...args)
-  event.sender.send('sql-result', res)
+ipcMain.on('sql-query', (event, ...args) => {
+  query(...args)
+    .then(res => event.sender.send('sql-result', res))
+    .catch(err => event.sender.send('sql-error', err));
 })

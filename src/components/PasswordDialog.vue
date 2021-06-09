@@ -15,30 +15,30 @@
 </template>
 
 <script>
+import { ref, reactive } from 'vue'
+
 export default {
 	name: 'PasswordDialog',
-	props: ['modelValue'],
-	data: () => ({
-		password: {
+	setup() {
+		let isVisible = ref(false);
+		let password = reactive({
 			old: '',
 			new: '',
 			repeat: ''
-		}
-	}),
+		});
+		const show = () => {
+			isVisible.value = true;
+			password.old = password.new = password.repeat = '';
+		};
+		return { isVisible, password, show };
+	},
 	computed: {
-		isVisible: {
-			get() { return this.modelValue; },
-			set(value) {
-				this.password = { old: '', new: '', repeat: '' };
-				this.$emit('update:modelValue', value);
-			}
-		},
 		username: () => sessionStorage.getItem('userName'),
 		userrole: () => sessionStorage.getItem('userRole')
 	},
 	methods: {
 		async changePassword() {
-			const res = await this.$sql(`SELECT 1 FROM \`${this.userrole}\` WHERE \`${this.userrole[0]}ID\` = ? AND \`Password\` = ?`, [this.username, this.password.old]);
+			const res = await this.$sql.query(`SELECT 1 FROM \`${this.userrole}\` WHERE \`ID\` = ? AND \`Password\` = ?`, [this.username, this.password.old]);
 			if (!res.length)
 				this.$message.error('Old password is incorrect!');
 			else if (!this.password.new)
@@ -46,11 +46,12 @@ export default {
 			else if (this.password.new != this.password.repeat)
 				this.$message.error('The repeated new password is not the same!');
 			else {
-				this.$sql(`UPDATE \`${this.userrole}\` SET \`Password\` = ? WHERE \`${this.userrole[0]}ID\` = ? AND \`Password\` = ?`, [this.password.new, this.username, this.password.old]);
-				this.$message.success('Password has been changed!');
+				this.$sql.update(this.userrole, { 'ID': this.username, 'Password': this.password.old }, 'Password', this.password.new)
+					.then(() => this.$message.success('Password has been changed!'))
+					.catch(err => { console.error(err); this.$message.error('Internal Error!'); });
 				this.isVisible = false;
 			}
-			this.password = { old: '', new: '', repeat: '' };
+			Object.assign(this.password, { old: '', new: '', repeat: ''});
 		}
 	}
 }

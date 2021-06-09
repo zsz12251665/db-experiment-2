@@ -1,26 +1,44 @@
 <template>
-	<h1>Hello, {{userrole}} {{username}}. </h1>
+	<h1>Hello, {{ userrole }} {{ username }}. </h1>
 	<div class="menu">
-		<el-button v-if="userrole == 'Teacher'">Modify Student Scores</el-button>
-		<el-button v-if="userrole == 'Administrator'">Modify Student Information</el-button>
-		<el-button v-if="userrole == 'Administrator'">Modify Teacher Information</el-button>
-		<el-button v-if="userrole == 'Administrator'">Modify Course Information</el-button>
-		<el-button v-if="userrole == 'Administrator'">Modify Course Choosing Information</el-button>
-		<el-button v-if="userrole == 'Administrator'">Modify Course Teaching Information</el-button>
-		<el-button @click="passwordDialogVisible = true">Change Password</el-button>
-		<el-button @click="logout">Log Out</el-button>
+		<div v-if="userrole === 'Student'">
+			<el-button @click="$router.push('/Student/Query')">Query Scores</el-button>
+		</div>
+		<div v-if="userrole === 'Teacher'">
+			<el-button @click="$router.push('/Teacher/Modify')">Modify Student Scores</el-button>
+		</div>
+		<div v-if="userrole === 'Administrator'">
+			<el-button v-for="tableName in tableNames" :key="tableName" @click="$router.push(`/Administrator/Modify/${tableName}`)">Modify {{ tableName }} Information</el-button>
+		</div>
+		<div>
+			<el-button @click="showPasswordDialog">Change Password</el-button>
+			<el-button @click="logout">Log Out</el-button>
+		</div>
 	</div>
-	<PasswordDialog v-model="passwordDialogVisible" />
+	<PasswordDialog ref="passwordDialog" />
 </template>
 
+<style scoped>
+.el-button {
+	display: block;
+	margin: 0.5em auto;
+}
+</style>
+
 <script>
-import PasswordDialog from '../components/PasswordDialog.vue'
+import { ref } from 'vue'
+import PasswordDialog from '@/components/PasswordDialog.vue'
 
 export default {
 	name: 'Menu',
 	components: { PasswordDialog },
+	setup() {
+		const passwordDialog = ref();
+		const showPasswordDialog = () => passwordDialog.value.show();
+		return { passwordDialog, showPasswordDialog };
+	},
 	data: () => ({
-		passwordDialogVisible: false
+		tableNames: ['Administrator', 'Student', 'Teacher', 'Course', 'Choose']
 	}),
 	computed: {
 		username: () => sessionStorage.getItem('userName'),
@@ -29,7 +47,7 @@ export default {
 	methods: {
 		logout() {
 			sessionStorage.clear();
-			this.$router.push({ name: 'Login' });
+			this.$router.push('/Login');
 		}
 	}
 }

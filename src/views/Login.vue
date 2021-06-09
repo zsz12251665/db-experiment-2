@@ -1,5 +1,5 @@
 <template>
-	<h1>Welcome to MIS</h1>
+	<h1>Log In</h1>
 	<el-form :model="user">
 		<el-form-item><el-radio v-for="role in roles" :key="role" v-model="user.role" :label="role">{{ role }}</el-radio></el-form-item>
 		<el-form-item><el-input placeholder="Username" @keyup.enter="loginSubmit" v-model="user.name" /></el-form-item>
@@ -8,17 +8,23 @@
 	</el-form>
 </template>
 
+<style scoped>
+.el-form {
+	margin: auto;
+	width: max-content;
+}
+</style>
+
 <script>
 export default {
 	name: "Login",
 	data: () => ({
-		user: { role: 'Student', name: '', pass: '' },
-		roles: ["Student", "Teacher", "Administrator"]
+		roles: ['Student', 'Teacher', 'Administrator'],
+		user: { role: 'Student', name: '', pass: '' }
 	}),
 	methods: {
 		async loginSubmit() {
-			const res = await this.$sql(`SELECT 1 FROM \`${this.user.role}\` WHERE \`${this.user.role[0]}ID\` = ? AND \`Password\` = ?`, [this.user.name, this.user.pass]);
-			if (res.length)
+			if (await this.$sql.exists(this.user.role, {'ID': this.user.name, 'Password': this.user.pass}))
 			{
 				sessionStorage.setItem('userRole', this.user.role);
 				sessionStorage.setItem('userName', this.user.name);
