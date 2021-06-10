@@ -1,4 +1,4 @@
-# db-experiment-2-vue
+# db-experiment-2
 
 ## Project setup
 ```
