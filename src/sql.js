@@ -12,10 +12,12 @@ function where_values(obj) {
 }
 
 function query(...args) {
-	ipcRenderer.send('sql-query', ...args);
+	const identifier = Math.random().toString(36).slice(-8);
+	// console.log(identifier, ...args);
+	ipcRenderer.send('sql-query', identifier, ...args);
 	return new Promise((resolve, reject) => {
-		ipcRenderer.on('sql-result', (event, res) => resolve(res));
-		ipcRenderer.on('sql-error', (event, err) => reject(err));
+		ipcRenderer.on(`sql-result-${identifier}`, (event, res) => resolve(res));
+		ipcRenderer.on(`sql-error-${identifier}`, (event, err) => reject(err));
 	});
 }
 

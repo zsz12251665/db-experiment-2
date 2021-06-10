@@ -3,8 +3,8 @@
 	<el-table stripe border :data="tableData" show-summary :summary-method="summaryMethod">
 		<el-table-column sortable v-for="column in tableColumns" :key="column" :prop="column" :label="column" :filters="filters[column]" :filter-method="filterMethod">
 			<template #default="scope">
-				<span v-if="column != 'Score'">{{ scope.row[column] }}</span>
-				<el-input size="mini" v-if="column == 'Score'" v-model="modifyValues[tableData.indexOf(scope.row)]" @change="handleModify(scope.$index)" placeholder="Null"/>
+				<el-input size="mini" v-if="column == 'Score'" v-model="scores[tableData.indexOf(scope.row)]" @change="handleModify(scope.$index)" placeholder="Null"/>
+				<span v-else>{{ scope.row[column] }}</span>
 			</template>
 		</el-table-column>
 	</el-table>
@@ -21,54 +21,37 @@
 </style>
 
 <script>
+import { objectify, average } from '@/misc'
+
 export default {
 	name: 'TeacherModify',
 	mounted() {
 		this.$sql.query(`SELECT \`Choose\`.* FROM \`Choose\`, \`Course\` WHERE \`ID\` = \`CID\` AND \`TID\` = ?`, [this.username])
-			.then(res => {
-				this.modifyValues = res.map(row => row['Score']);
-				this.tableData = res;
-			});
+			.then(res => Object.assign(this, { tableData: res, scores: res.map(row => row['Score']) }))
+			.catch(err => { console.error(err); this.$message.error('An error occurs!'); });
 	},
 	data: () => ({
 		tableData: [],
-		modifyValues: []
+		scores: []
 	}),
 	computed: {
 		username: () => sessionStorage.getItem('userName'),
 		tableColumns() { return this.tableData.length ? Object.keys(this.tableData[0]) : []; },
-		filters() {
-			const res = {};
-			for (const column of this.tableColumns)
-				if (column !== 'Score')
-					res[column] = [...new Set(this.tableData.map(row => row[column]))].map(value => ({ text: value, value }));
-			return res;
-		}
+		filters() { return this.tableColumns.filter(column => column !== 'Score').reduce((acc, cur) => Object.assign(acc, objectify(cur, [...new Set(this.tableData.map(row => row[cur]))].map(value => ({ text: value === null ? 'Null' : value, value })))), {}) }
 	},
 	methods: {
 		filterMethod: (value, row, column) => row[column['property']] === value,
-		summaryMethod(param) {
-			const { data } = param;
-			const res = [];
-			this.tableColumns.forEach(column => {
-				if (column === 'Score')
-					res.push((data.reduce((acc, cur) => acc + Number(cur[column]), 0) / data.length).toFixed(2));
-				else
-					res.push('');
-			})
-			res[0] = 'Average Score';
-			return res;
-		},
+		summaryMethod: param => param.columns.map((column, index) => index === 0 ? 'Average Score' : column.property === 'Score' ? average(param.data.map(row => row[column.property])).toFixed(2) : ''),
 		handleModify(row) {
-			const newValue = this.modifyValues[row] === '' ? null : this.modifyValues[row];
-			if (this.tableData[row]['Score'] === newValue)
-				return;
+			const newValue = this.scores[row] === '' ? null : this.scores[row];
+			if (this.tableData[row]['Score'] === newValue) return;
 			if (newValue !== null && 0 <= newValue && newValue <= 100) {
 				this.$sql.update('Choose', this.tableData[row], 'Score', newValue)
-					.then(() => this.tableData[row]['Score'] = newValue);
+					.then(() => this.tableData[row]['Score'] = newValue)
+					.catch(err => { console.error(err); this.$message.error('An error occurs!'); });
 			} else {
 				this.$message.error('Score must be a number between 0 and 100!');
-				this.modifyValues[row] = this.tableData[row]['Score'];
+				this.scores[row] = this.tableData[row]['Score'];
 			}
 		}
 	}

@@ -89,8 +89,8 @@ const db = new (sqlite3.verbose().Database)(dbPath);
 // const db = mysql.createPool({ host: 'hoss.top', port: '3306', user: 'test', password: 'test', database: 'test' });
 const query = util.promisify(db.all || db.query).bind(db);
 
-ipcMain.on('sql-query', (event, ...args) => {
+ipcMain.on('sql-query', (event, identifier, ...args) => {
   query(...args)
-    .then(res => event.sender.send('sql-result', res))
-    .catch(err => event.sender.send('sql-error', err));
+    .then(res => event.sender.send(`sql-result-${identifier}`, res))
+    .catch(err => event.sender.send(`sql-error-${identifier}`, err));
 })

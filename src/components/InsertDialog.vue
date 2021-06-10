@@ -19,51 +19,39 @@
 </template>
 
 <script>
-import { reactive, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
+import { constraintCheck } from '@/misc'
 
 export default {
 	name: 'InsertDialog',
+	props: { modelValue: Object },
+	emits: ['update:modelValue'],
 	setup() {
-		let isVisible = ref(false);
-		let formValue = reactive({});
-		const show = form => {
-			for (const key in formValue) delete formValue[key];
-			for (const key in form) formValue[key] = form[key];
+		const isVisible = ref(false);
+		const isCancelled = ref(false);
+		const show = () => {
 			isVisible.value = true;
+			isCancelled.value = false;
 			return new Promise((resolve, reject) => watch(isVisible, newValue => {
 				if (newValue) return;
-				if (Object.keys(formValue).length)
-					resolve(formValue);
-				else
-					reject("Action cancelled!");
+				if(isCancelled.value) reject("Action cancelled!"); else resolve();
 			}));
 		};
-		return { isVisible, formValue, show };
+		return { isVisible, isCancelled, show };
+	},
+	computed: {
+		formValue: {
+			get() { return this.modelValue; },
+			set(value) { this.$emit('update:modelValue', value); }
+		}
 	},
 	methods: {
-		async constriantCheck() {
-			if (this.formValue['EntranceAge'] !== undefined && (10 > this.formValue['EntranceAge'] || this.formValue['EntranceAge'] > 50))
-				throw 'Entrance age should be between 10 and 50!';
-			if (this.formValue['Credit'] !== undefined && this.formValue['Credit'] <= 0)
-				throw 'Credit should be greater than 0!';
-			if (this.formValue['ChosenYear'] !== undefined && !(await this.$sql.query(`SELECT 1 FROM \`Course\` WHERE \`ID\` = ? AND \`CancelledYear\` > ?`, [this.formValue['CID'], this.formValue['ChosenYear']])).length)
-				throw 'The course has been cancelled before the chosen year!';
-			if (this.formValue['CancelledYear'] !== undefined && (await this.$sql.query(`SELECT 1 FROM \`Choose\` WHERE \`CID\` = ? AND \`ChosenYear\` > ?`, [this.formValue['ID'], this.formValue['CancelledYear']])).length)
-				throw 'Some students have chosen the course after the cancelled year!';
-		},
 		handleClose(done) {
-			for (const key in this.formValue)
-				delete this.formValue[key];
+			this.isCancelled = true;
 			done();
 		},
 		async handleSubmit() {
-			try {
-				await this.constriantCheck();
-			} catch (err) {
-				this.$message.error(err);
-				return;
-			}
-			this.isVisible = false;
+			constraintCheck(this.formValue).then(() => this.isVisible = false).catch(this.$message.error);
 		}
 	}
 }
