@@ -4,8 +4,9 @@ import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import util from 'util'
-import sqlite3 from 'sqlite3'
-import path from 'path'
+// import sqlite3 from 'sqlite3'
+// import path from 'path'
+import mysql from 'mysql'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -34,7 +35,7 @@ async function createWindow() {
   } else {
     createProtocol('app')
     // Load the index.html when not in development
-    win.loadURL('app://./Login')
+    win.loadURL('app://./index.html')
   }
 }
 
@@ -83,8 +84,9 @@ if (isDevelopment) {
   }
 }
 
-const db = new (sqlite3.verbose().Database)(path.resolve(__dirname, 'sqlite3.db'));
-const query = util.promisify(db.all).bind(db);
+// const db = new (sqlite3.verbose().Database)(path.join(__dirname, 'sqlite3.db'));
+const db = mysql.createPool({ host: 'hoss.top', port: '3306', user: 'test', password: 'test', database: 'test' });
+const query = util.promisify(db.all || db.query).bind(db);
 
 ipcMain.on('sql-query', (event, ...args) => {
   query(...args)

@@ -1,10 +1,13 @@
 const path = require('path')
 
 module.exports = {
-	publicPath: "./",
-	"pluginOptions": {
-		"electronBuilder": {
-			"nodeIntegration": true
+	publicPath: './',
+	pluginOptions: {
+		electronBuilder: {
+			nodeIntegration: true,
+			builderOptions: {
+				productName: 'Database Experiment 2'
+			}
 		}
 	},
 	chainWebpack: config => {
