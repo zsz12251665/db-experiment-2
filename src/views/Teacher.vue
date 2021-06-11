@@ -24,7 +24,7 @@
 import { objectify, average } from '@/misc'
 
 export default {
-	name: 'TeacherModify',
+	name: 'TeacherView',
 	mounted() {
 		this.$sql.query(`SELECT \`Choose\`.* FROM \`Choose\`, \`Course\` WHERE \`ID\` = \`CID\` AND \`TID\` = ?`, [this.username])
 			.then(res => Object.assign(this, { tableData: res, scores: res.map(row => row['Score']) }))

@@ -38,20 +38,19 @@ export default {
 	},
 	methods: {
 		async changePassword() {
-			const res = await this.$sql.query(`SELECT 1 FROM \`${this.userrole}\` WHERE \`ID\` = ? AND \`Password\` = ?`, [this.username, this.password.old]);
-			if (!res.length)
+			if (!await this.$sql.exists(this.userrole, { 'ID': this.username, 'Password': this.password.old }))
 				this.$message.error('Old password is incorrect!');
 			else if (!this.password.new)
 				this.$message.error('Password cannot be empty!');
 			else if (this.password.new != this.password.repeat)
-				this.$message.error('The repeated new password is not the same!');
+				this.$message.error('The new passwords do not match!');
 			else {
 				this.$sql.update(this.userrole, { 'ID': this.username, 'Password': this.password.old }, 'Password', this.password.new)
 					.then(() => this.$message.success('Password has been changed!'))
-					.catch(err => { console.error(err); this.$message.error('Internal Error!'); });
+					.catch(err => { console.error(err); this.$message.error('An error occurs!'); });
 				this.isVisible = false;
 			}
-			Object.assign(this.password, { old: '', new: '', repeat: ''});
+			this.password = { old: '', new: '', repeat: ''};
 		}
 	}
 }

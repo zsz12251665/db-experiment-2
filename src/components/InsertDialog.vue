@@ -2,11 +2,11 @@
 	<el-dialog v-model="isVisible" title="Insert a row" :before-close="handleClose">
 		<el-form :model="formValue" label-width="100px">
 			<el-form-item v-for="key in Object.keys(formValue)" :key="key" :label="key">
-				<el-input v-if="key != 'Gender'" :placeholder="key" v-model="formValue[key]" :show-password="key === 'Password'" />
 				<el-radio-group size="mini" v-if="key == 'Gender'" v-model="formValue[key]">
 					<el-radio-button :label="1">Male</el-radio-button>
 					<el-radio-button :label="0">Female</el-radio-button>
 				</el-radio-group>
+				<el-input v-else v-model="formValue[key]" :show-password="key === 'Password'" :placeholder="key" />
 			</el-form-item>
 		</el-form>
 		<template #footer>
@@ -50,7 +50,7 @@ export default {
 			this.isCancelled = true;
 			done();
 		},
-		async handleSubmit() {
+		handleSubmit() {
 			constraintCheck(this.formValue).then(() => this.isVisible = false).catch(this.$message.error);
 		}
 	}

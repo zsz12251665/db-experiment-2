@@ -2,13 +2,13 @@
 	<h1>Hello, {{ userrole }} {{ username }}. </h1>
 	<div class="menu">
 		<div v-if="userrole === 'Student'">
-			<el-button @click="$router.push('/Student/Query')">Query Scores</el-button>
+			<el-button @click="$router.push('/Student')">Query Scores</el-button>
 		</div>
 		<div v-if="userrole === 'Teacher'">
-			<el-button @click="$router.push('/Teacher/Modify')">Modify Student Scores</el-button>
+			<el-button @click="$router.push('/Teacher')">Modify Student Scores</el-button>
 		</div>
 		<div v-if="userrole === 'Administrator'">
-			<el-button v-for="tableName in tableNames" :key="tableName" @click="$router.push(`/Administrator/Modify/${tableName}`)">Modify {{ tableName }} Information</el-button>
+			<el-button v-for="tableName in tableNames" :key="tableName" @click="$router.push(`/Administrator/${tableName}`)">Modify {{ tableName }} Information</el-button>
 		</div>
 		<div>
 			<el-button @click="showPasswordDialog">Change Password</el-button>

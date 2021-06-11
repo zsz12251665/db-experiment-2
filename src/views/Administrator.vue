@@ -37,7 +37,7 @@ import InsertDialog from '@/components/InsertDialog.vue'
 import { constraintCheck, objectify, average } from '@/misc'
 
 export default {
-	name: 'AdministratorModify',
+	name: 'AdministratorView',
 	components: { InsertDialog },
 	setup() {
 		const insertDialog = ref();

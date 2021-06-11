@@ -21,24 +21,24 @@ const routes = [
     component: () => import('@/views/Menu.vue')
   },
   {
-    path: '/Administrator/Modify/:tableName',
-    name: 'AdministratorModify',
-    component: () => import('@/views/Administrator/Modify.vue')
+    path: '/Administrator/:tableName',
+    name: 'AdministratorView',
+    component: () => import('@/views/Administrator.vue')
   },
   {
-    path: '/Teacher/Modify',
-    name: 'TeacherModify',
-    component: () => import('@/views/Teacher/Modify.vue')
+    path: '/Teacher',
+    name: 'TeacherView',
+    component: () => import('@/views/Teacher.vue')
   },
   {
-    path: '/Student/Query',
-    name: 'StudentQuery',
-    component: () => import('@/views/Student/Query.vue')
+    path: '/Student',
+    name: 'StudentView',
+    component: () => import('@/views/Student.vue')
   }
 ]
 
 const router = createRouter({
-  history: process.env.IS_ELECTRON ? createWebHashHistory() : createWebHistory(),
+  history: process.env.NODE_ENV === 'production' ? createWebHashHistory() : createWebHistory(),
   routes
 })
 

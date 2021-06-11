@@ -6,7 +6,6 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import util from 'util'
 import sqlite3 from 'sqlite3'
 import path from 'path'
-// import mysql from 'mysql'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -86,8 +85,7 @@ if (isDevelopment) {
 
 const dbPath = path.resolve(__dirname.replace('app.asar', 'app.asar.unpacked'), __dirname.includes('app.asar') ? 'sqlite3.db' : '../sqlite3.db')
 const db = new (sqlite3.verbose().Database)(dbPath);
-// const db = mysql.createPool({ host: 'hoss.top', port: '3306', user: 'test', password: 'test', database: 'test' });
-const query = util.promisify(db.all || db.query).bind(db);
+const query = util.promisify(db.all).bind(db);
 
 ipcMain.on('sql-query', (event, identifier, ...args) => {
   query(...args)
