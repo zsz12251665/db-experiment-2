@@ -19,9 +19,9 @@
 import { objectify, average } from '@/misc'
 
 export default {
-	name: 'StudentView',
+	name: 'Student',
 	mounted() {
-		this.$sql.query(`SELECT * FROM \`Choose\` WHERE \`SID\` = ?`, [this.username])
+		this.$sql.query(`SELECT \`CID\`, \`Name\` AS \`CName\`, \`Credit\`, \`ChosenYear\`, \`Score\` FROM \`Choose\`, \`Course\` WHERE \`ID\` = \`CID\` AND \`SID\` = ?`, [this.username])
 			.then(res => this.tableData = res)
 			.catch(err => { console.error(err); this.$message.error('An error occurs!'); });
 	},

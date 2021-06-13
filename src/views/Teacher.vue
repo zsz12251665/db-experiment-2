@@ -24,9 +24,9 @@
 import { objectify, average } from '@/misc'
 
 export default {
-	name: 'TeacherView',
+	name: 'Teacher',
 	mounted() {
-		this.$sql.query(`SELECT \`Choose\`.* FROM \`Choose\`, \`Course\` WHERE \`ID\` = \`CID\` AND \`TID\` = ?`, [this.username])
+		this.$sql.query(`SELECT \`SID\`, \`Student\`.\`Name\` AS \`SName\`, \`CID\`, \`Course\`.\`Name\` AS \`CName\`, \`ChosenYear\`, \`Score\` FROM \`Choose\`, \`Course\`, \`Student\` WHERE \`Course\`.\`ID\` = \`CID\` AND \`Student\`.\`ID\` = \`SID\` AND \`TID\` = ?`, [this.username])
 			.then(res => Object.assign(this, { tableData: res, scores: res.map(row => row['Score']) }))
 			.catch(err => { console.error(err); this.$message.error('An error occurs!'); });
 	},
